@@ -33,6 +33,7 @@ body {
   --dark: #001f54;
   --background: #0a1128;
   --white: #fefcfb;
+  --warning: #cc3300;
 }
 
 body {
@@ -170,13 +171,18 @@ main {
   font-size: 1.75em;
   color: var(--white);
   z-index: 2;
-  transition: background-color 0.33s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: background-color 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .calc-button:hover {
   background-color: var(--dark);
 }
 .calc-button:active {
   transform: scale(0.95);
+  box-shadow: 0px 0px 3px 0.25px var(--background) inset;
+}
+.calc-button-warning {
+  transform: scale(0.95);
+  background-color: var(--warning) !important;
   box-shadow: 0px 0px 3px 0.25px var(--background) inset;
 }
 .calc-number {
