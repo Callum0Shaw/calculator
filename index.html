@@ -5,54 +5,59 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
+
     <title>Calculator</title>
   </head>
   <body>
-    <div class="gradient"></div>
-    <header>
-      <h1>A Callculator by Callum</h1>
-    </header>
-    <main>
-      <section id="calc-container">
-        <div id="display">
-          <p id="history">7 x 7</p>
-          <p id="result">14</p>
-        </div>
-        <table id="calc-table">
-          <tbody>
-            <tr>
-              <td><button class="button function">AC</button></td>
-              <td><button class="button function">Del</button></td>
-              <td><button class="button function">%</button></td>
-              <td><button class="button function">/</button></td>
-            </tr>
-            <tr>
-              <td><button class="button number">7</button></td>
-              <td><button class="button number">8</button></td>
-              <td><button class="button number">9</button></td>
-              <td><button class="button function">*</button></td>
-            </tr>
-            <tr>
-              <td><button class="button number">4</button></td>
-              <td><button class="button number">5</button></td>
-              <td><button class="button number">6</button></td>
-              <td><button class="button function">-</button></td>
-            </tr>
-            <tr>
-              <td><button class="button number">1</button></td>
-              <td><button class="button number">2</button></td>
-              <td><button class="button number">3</button></td>
-              <td><button class="button function">+</button></td>
-            </tr>
-            <tr>
-              <td><button class="button function">.</button></td>
-              <td><button class="button number">0</button></td>
-              <td><button class="button function">+/-</button></td>
-              <td><button class="button function">=</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    </main>
+    <div class="container">
+      <header class="header">
+        <h1>A Callculator by Callum</h1>
+      </header>
+      <main>
+        <div class="gradient"></div>
+        <section class="calc-container">
+          <h2>Callumulator</h2>
+          <div class="calc-display">
+            <p class="calc-history"></p>
+            <p class="calc-result"></p>
+          </div>
+          <table class="calc-table">
+            <tbody>
+              <tr class="calc-row">
+                <td><button class="calc-button calc-AC">AC</button></td>
+                <td><button class="calc-button calc-Del">Del</button></td>
+                <td><button class="calc-button calc-function">%</button></td>
+                <td><button class="calc-button calc-function">/</button></td>
+              </tr>
+              <tr class="calc-row">
+                <td><button class="calc-button calc-number">7</button></td>
+                <td><button class="calc-button calc-number">8</button></td>
+                <td><button class="calc-button calc-number">9</button></td>
+                <td><button class="calc-button calc-function">*</button></td>
+              </tr>
+              <tr class="calc-row">
+                <td><button class="calc-button calc-number">4</button></td>
+                <td><button class="calc-button calc-number">5</button></td>
+                <td><button class="calc-button calc-number">6</button></td>
+                <td><button class="calc-button calc-function">-</button></td>
+              </tr>
+              <tr class="calc-row">
+                <td><button class="calc-button calc-number">1</button></td>
+                <td><button class="calc-button calc-number">2</button></td>
+                <td><button class="calc-button calc-number">3</button></td>
+                <td><button class="calc-button calc-function">+</button></td>
+              </tr>
+              <tr class="calc-row">
+                <td><button class="calc-button calc-number">.</button></td>
+                <td><button class="calc-button calc-number">0</button></td>
+                <td><button class="calc-button calc-function">+/-</button></td>
+                <td><button class="calc-button calc-equals">=</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+    <script type="text/javascript" src="./script.js"></script>
   </body>
 </html>
