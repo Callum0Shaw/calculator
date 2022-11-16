@@ -32,7 +32,7 @@
   function handleNumber(event) {
     // if there is a result, clear history/result
     console.log(state);
-    if (state.currExp.length === 0) {
+    if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
     state.history.push(event.target.innerText);
