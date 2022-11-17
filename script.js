@@ -94,7 +94,9 @@
     state.currExp.push(parseInt(state.currNum.join('')));
     state.currNum = [];
 
-    state.result = calculate(state.currExp.join(''));
+    let answer = calculate(state.currExp.join(''));
+    state.result = formatNumber(answer)
+    
     updateDisplay();
     state.currExp = []
     console.log(state);
@@ -110,5 +112,16 @@
   // a regex to filter the 'str' to ensure no malicious code.
   function calculate(str) {
     return Function(`'use strict'; return (${str})`)();
+  }
+
+  function roundToTenDigits(num) {
+    let arr = num.toString().split('')
+    if(arr.includes('.')) return arr.slice(0, 10).join('')
+    return parseInt(arr.slice(0, 10).join(''))
+  }
+
+  function formatNumber(num) {
+    const rounded = roundToTenDigits(num)
+    return rounded.toLocaleString()
   }
 })();
