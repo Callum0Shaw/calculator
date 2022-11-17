@@ -4,7 +4,8 @@
     history: [],
     result: '',
     currExp: [],
-    currNum: [],
+    currNum: '',
+    more: false
   };
 
   // SELECTORS/VARIABLES
@@ -15,6 +16,10 @@
   let AcButton = document.querySelector('.calc-AC');
   let DelButton = document.querySelector('.calc-Del');
   let equalsButton = document.querySelector('.calc-equals');
+  let negButton = document.querySelector('.calc-negative');
+  let moreButton = document.querySelector('.calc-more')
+  let powerButton = document.querySelector('.calc-power')
+  let rootButton = document.querySelector('.calc-root')
 
   // EVENT LISTENERS
   numberButtons.forEach((el) => el.addEventListener('click', handleNumber));
@@ -22,39 +27,37 @@
   AcButton.addEventListener('click', handleClear);
   DelButton.addEventListener('click', handleDel);
   equalsButton.addEventListener('click', handleEquals);
+  negButton.addEventListener('click', handleNegative);
+  moreButton.addEventListener('click', toggleMore)
 
-  // FUNCTIONS
+  // EVENT FUNCTIONS
   function updateDisplay() {
     history.innerText = state.history.join('');
     result.innerText = state.result;
   }
 
   function handleNumber(event) {
-    // if there is a result, clear history/result
-    console.log(state);
+    // clear display if new expression
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
+    state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
     state.history.push(event.target.innerText);
-    state.currNum.push(event.target.innerText);
     updateDisplay();
   }
 
   // TODO: Break up/simplify function
   function handleOperator(event) {
     // Issue warning if no number before operator
-    if (state.history.length === 0) return warning(event);
+    if (state.currNum === '') return warning(event);
 
-    // If there is a result, change history to new result
-    if (state.result !== '') {
-      state.history = [];
-      state.history.push(`${state.result}`);
-      state.currNum = [state.result];
-    }
+    // If there is a result, change currNum to new result
+    if (state.result !== '') state.currNum = state.result;
+
     const operator = event.target.innerText;
 
-    state.currExp.push(parseInt(state.currNum.join('')));
-    state.currNum = [];
+    state.currExp.push(parseInt(state.currNum));
+    state.currNum = '';
 
     // If if second operator, resolve current expression and set result of that as first number in a new expression - update history
     if (state.currExp.length === 3) {
@@ -90,38 +93,77 @@
   }
 
   function handleEquals(event) {
-    if (state.currNum.length === 0) return warning(event);
-    state.currExp.push(parseInt(state.currNum.join('')));
-    state.currNum = [];
+    if (state.currNum === '') return warning(event);
+
+    state.currExp.push(state.currNum);
+    state.currNum = '';
 
     let answer = calculate(state.currExp.join(''));
-    state.result = formatNumber(answer)
+    if (isNaN(answer) || answer === Infinity || answer === -Infinity)
+    state.result = 'ERROR';
+    else state.result = formatNumber(answer);
     
     updateDisplay();
-    state.currExp = []
+    state.currExp = [];
     console.log(state);
   }
+
+  function handleNegative(event) {
+    if (state.currNum[0] === '-') state.currNum.shift();
+    else state.currNum.unshift('-');
+    updateDisplay;
+  }
+
+  function toggleMore(event) {
+    if(!state.more) {
+      rootButton.innerText = '√'
+      powerButton.innerText = '^'
+    }
+    else {
+      rootButton.innerText = '/'
+      powerButton.innerText = '*'
+    }
+    state.more = !state.more
+  }
+
+  // HELPER FUNCTION
 
   function warning(event) {
     event.target.classList.add('calc-button-warning');
     setTimeout(() => event.target.classList.remove('calc-button-warning'), 100);
   }
 
-  // WARNING: Using Function constructor like this does give user access to local scope. However, due to
-  // the limited nature of this app, it will be quite safe. If expanding, solutions include running
-  // a regex to filter the 'str' to ensure no malicious code.
-  function calculate(str) {
-    return Function(`'use strict'; return (${str})`)();
+  function calculate() {
+    if(state.currExp.length === 1) return state.currExp[1]
+    if(state.currExp.length === 2) return "ERROR"
+    const firstNum = state.currExp[0];
+    const secondNum = state.currExp[2];
+    switch (state.currExp[1]) {
+      case '+':
+        return firstNum + secondNum;
+      case '-':
+        return firstNum - secondNum;
+      case '/':
+        return firstNum / secondNum;
+      case '*':
+        return firstNum * secondNum;
+      case '+':
+        return firstNum + secondNum;
+      case '^':
+        return Math.pow(firstNum, secondNum)
+      default:
+        return 'ERROR';
+    }
   }
 
   function roundToTenDigits(num) {
-    let arr = num.toString().split('')
-    if(arr.includes('.')) return arr.slice(0, 10).join('')
-    return parseInt(arr.slice(0, 10).join(''))
+    let arr = num.toString().split('');
+    if (arr.includes('.')) return arr.slice(0, 10).join('');
+    return parseInt(arr.slice(0, 10).join(''));
   }
 
   function formatNumber(num) {
-    const rounded = roundToTenDigits(num)
-    return rounded.toLocaleString()
+    const rounded = roundToTenDigits(num);
+    return rounded.toLocaleString();
   }
 })();
