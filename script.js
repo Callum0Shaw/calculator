@@ -1,11 +1,10 @@
 (function () {
   // STATE/VARIABLES
   let state = {
-    history: [],
     result: '',
     currExp: [],
     currNum: '',
-    more: false
+    more: false,
   };
 
   // SELECTORS/VARIABLES
@@ -17,9 +16,9 @@
   let DelButton = document.querySelector('.calc-Del');
   let equalsButton = document.querySelector('.calc-equals');
   let negButton = document.querySelector('.calc-negative');
-  let moreButton = document.querySelector('.calc-more')
-  let powerButton = document.querySelector('.calc-power')
-  let rootButton = document.querySelector('.calc-root')
+  let moreButton = document.querySelector('.calc-more');
+  let powerButton = document.querySelector('.calc-power');
+  let rootButton = document.querySelector('.calc-root');
 
   // EVENT LISTENERS
   numberButtons.forEach((el) => el.addEventListener('click', handleNumber));
@@ -28,11 +27,11 @@
   DelButton.addEventListener('click', handleDel);
   equalsButton.addEventListener('click', handleEquals);
   negButton.addEventListener('click', handleNegative);
-  moreButton.addEventListener('click', toggleMore)
+  moreButton.addEventListener('click', toggleMore);
 
   // EVENT FUNCTIONS
   function updateDisplay() {
-    history.innerText = state.history.join('');
+    history.innerText = state.currExp.join(' ');
     result.innerText = state.result;
   }
 
@@ -42,41 +41,41 @@
       handleClear();
     }
     state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
-    state.history.push(event.target.innerText);
+    if (isNaN(state.currExp.at(-1))) state.currExp.push(state.currNum);
+    else state.currExp.splice(-1, 1, state.currNum)
     updateDisplay();
   }
 
   // TODO: Break up/simplify function
   function handleOperator(event) {
-    // Issue warning if no number before operator
-    if (state.currNum === '') return warning(event);
-
     // If there is a result, change currNum to new result
-    if (state.result !== '') state.currNum = state.result;
+    if (state.result !== '') {
+      state.currNum = parseInt(state.result);
+      state.currExp.push(state.currNum)
+    }
+
+    // Issue warning if no number before operator
+    if (state.currExp.length === 0) return warning(event);
 
     const operator = event.target.innerText;
 
-    state.currExp.push(parseInt(state.currNum));
     state.currNum = '';
 
-    // If if second operator, resolve current expression and set result of that as first number in a new expression - update history
+    // If second operator, resolve current expression and set result of that as first number in a new expression - update history
     if (state.currExp.length === 3) {
-      const answer = calculate(state.currExp.join(''));
-      state.history = [answer];
+      const answer = calculate();
       state.currExp = [answer];
     }
 
     state.currExp.push(operator);
 
     // if last input is operator, override
-    const regex = /[^0-9]/;
-    if (regex.test(state.history.at(-1))) {
-      state.history.splice(-1, 1, ` ${operator} `);
+    if (isNaN(state.currExp.at(-1))) {
+      state.currExp.splice(-1, 1, ` ${operator} `);
     } else {
-      state.history.push(` ${operator} `);
+      state.currExp.push(` ${operator} `);
     }
     updateDisplay();
-    console.log(state);
   }
 
   function handleDel(event) {
@@ -95,35 +94,32 @@
   function handleEquals(event) {
     if (state.currNum === '') return warning(event);
 
-    state.currExp.push(state.currNum);
     state.currNum = '';
 
     let answer = calculate(state.currExp.join(''));
     if (isNaN(answer) || answer === Infinity || answer === -Infinity)
-    state.result = 'ERROR';
+      state.result = 'ERROR';
     else state.result = formatNumber(answer);
-    
+
     updateDisplay();
     state.currExp = [];
     console.log(state);
   }
 
   function handleNegative(event) {
-    if (state.currNum[0] === '-') state.currNum.shift();
-    else state.currNum.unshift('-');
+    state.currNum = 0 - state.currNum;
     updateDisplay;
   }
 
   function toggleMore(event) {
-    if(!state.more) {
-      rootButton.innerText = '√'
-      powerButton.innerText = '^'
+    if (!state.more) {
+      rootButton.innerText = '√';
+      powerButton.innerText = '^';
+    } else {
+      rootButton.innerText = '/';
+      powerButton.innerText = '*';
     }
-    else {
-      rootButton.innerText = '/'
-      powerButton.innerText = '*'
-    }
-    state.more = !state.more
+    state.more = !state.more;
   }
 
   // HELPER FUNCTION
@@ -134,11 +130,11 @@
   }
 
   function calculate() {
-    if(state.currExp.length === 1) return state.currExp[1]
-    if(state.currExp.length === 2) return "ERROR"
+    if (state.currExp.length === 1) return state.currExp[1];
+    if (state.currExp.length === 2) return 'ERROR';
     const firstNum = state.currExp[0];
     const secondNum = state.currExp[2];
-    switch (state.currExp[1]) {
+    switch (state.currExp[1].trim()) {
       case '+':
         return firstNum + secondNum;
       case '-':
@@ -150,7 +146,7 @@
       case '+':
         return firstNum + secondNum;
       case '^':
-        return Math.pow(firstNum, secondNum)
+        return Math.pow(firstNum, secondNum);
       default:
         return 'ERROR';
     }
