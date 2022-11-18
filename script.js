@@ -36,13 +36,15 @@
   }
 
   function handleNumber(event) {
-    // clear display if new expression
+    // Clear display if new expression
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
     state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
+
     if (isNaN(state.currExp.at(-1))) state.currExp.push(state.currNum);
-    else state.currExp.splice(-1, 1, state.currNum)
+    else state.currExp.splice(-1, 1, state.currNum);
+
     updateDisplay();
   }
 
@@ -51,7 +53,7 @@
     // If there is a result, change currNum to new result
     if (state.result !== '') {
       state.currNum = parseInt(state.result);
-      state.currExp.push(state.currNum)
+      state.currExp.push(state.currNum);
     }
 
     // Issue warning if no number before operator
@@ -66,48 +68,46 @@
       const answer = calculate();
       state.currExp = [answer];
     }
-
-    state.currExp.push(operator);
-
     // if last input is operator, override
-    if (isNaN(state.currExp.at(-1))) {
-      state.currExp.splice(-1, 1, ` ${operator} `);
-    } else {
-      state.currExp.push(` ${operator} `);
-    }
+    isNaN(state.currExp.at(-1))
+      ? state.currExp.splice(-1, 1, ` ${operator} `)
+      : state.currExp.push(` ${operator} `);
+
     updateDisplay();
   }
 
   function handleDel(event) {
-    state.history.pop();
+    if (isNaN(state.currExp.at(-1))) state.currExp.pop();
+    else {
+      state.currNum = Math.floor(state.currNum / 10);
+      state.currExp.splice(-1, 1, state.currNum);
+    }
     updateDisplay();
   }
 
   function handleClear(event) {
-    state.history = [];
     state.result = '';
     state.currExp = [];
-    state.currNum = [];
+    state.currNum = '';
     updateDisplay();
   }
 
   function handleEquals(event) {
     if (state.currNum === '') return warning(event);
 
-    state.currNum = '';
-
     let answer = calculate(state.currExp.join(''));
-    if (isNaN(answer) || answer === Infinity || answer === -Infinity)
-      state.result = 'ERROR';
-    else state.result = formatNumber(answer);
+    isNaN(answer) || answer === Infinity || answer === -Infinity
+      ? (state.result = 'MATHS IS HARD')
+      : (state.result = formatNumber(answer));
 
     updateDisplay();
+
+    state.currNum = '';
     state.currExp = [];
-    console.log(state);
   }
 
   function handleNegative(event) {
-    state.currNum = 0 - state.currNum;
+
     updateDisplay;
   }
 
