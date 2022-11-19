@@ -5,6 +5,7 @@
     currExp: [],
     currNum: '',
     more: false,
+    negative: false,
   };
 
   // SELECTORS/VARIABLES
@@ -30,17 +31,17 @@
   moreButton.addEventListener('click', toggleMore);
 
   // EVENT FUNCTIONS
-  function updateDisplay() {
-    history.innerText = state.currExp.join(' ');
-    result.innerText = state.result;
-  }
 
   function handleNumber(event) {
     // Clear display if new expression
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
-    state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
+    if (state.negative) {
+      state.currNum = parseInt(`-${state.currNum}${event.target.innerText}`);
+      state.negative = false;
+    } else
+      state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
 
     if (isNaN(state.currExp.at(-1))) state.currExp.push(state.currNum);
     else state.currExp.splice(-1, 1, state.currNum);
@@ -50,6 +51,7 @@
 
   // TODO: Break up/simplify function
   function handleOperator(event) {
+    if (event.target.innerText === '√') return handleRoot(event);
     // If there is a result, change currNum to new result
     if (state.result !== '') {
       state.currNum = parseInt(state.result);
@@ -107,8 +109,9 @@
   }
 
   function handleNegative(event) {
-
-    updateDisplay;
+    if (isNaN(state.currExp.at(-1))) state.negative = true;
+    else state.currExp.splice(-1, 1, 0 - state.currExp.at(-1));
+    updateDisplay();
   }
 
   function toggleMore(event) {
@@ -122,7 +125,14 @@
     state.more = !state.more;
   }
 
+  function handleRoot(event) {
+    console.log('root');
+  }
   // HELPER FUNCTION
+  function updateDisplay() {
+    history.innerText = state.currExp.join(' ');
+    result.innerText = state.result;
+  }
 
   function warning(event) {
     event.target.classList.add('calc-button-warning');
@@ -130,8 +140,7 @@
   }
 
   function calculate() {
-    if (state.currExp.length === 1) return state.currExp[1];
-    if (state.currExp.length === 2) return 'ERROR';
+    if (state.currExp.length === 1) return state.currExp[0];
     const firstNum = state.currExp[0];
     const secondNum = state.currExp[2];
     switch (state.currExp[1].trim()) {
