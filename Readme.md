@@ -2,7 +2,19 @@
 
 A simple calculator using **Vanilla JS** for the RS School from EPAM
 
-#### Scoring
+### Funcionality: 
+- Multipicaiton, Divison, Addition, Subtraction, Square Root, & Power of. 
+- Can handle both negative and decimals
+- Clear All & Del
+- Keyboard inputs
+
+
+Note: See below for how the task dictated how to handle chaining. It does not take in to account PEDMAS
+
+
+
+
+### Scoring (Copied from task descriptiopn)
 **Basic functionality +60 points**
 The calculator performs mathematical operations: **addition, subtraction, multiplication, division**. 
 It is necessary to have a *decimal point, actions with multi-digit numbers, the ability to perform several actions in a row, to clear the result*

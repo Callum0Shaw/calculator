@@ -1,14 +1,17 @@
 (function () {
-  // STATE/VARIABLES
-  let state = {
+  /* APP STATE */
+
+  const state = {
     result: '',
     currExp: [],
     currNum: '',
-    more: false,
+    showMore: false,
     negative: false,
+    root: false,
   };
 
-  // SELECTORS/VARIABLES
+  /* SELECTORS/VARIABLES */
+
   let history = document.querySelector('.calc-history');
   let result = document.querySelector('.calc-result');
   let numberButtons = document.querySelectorAll('.calc-number');
@@ -16,32 +19,33 @@
   let AcButton = document.querySelector('.calc-AC');
   let DelButton = document.querySelector('.calc-Del');
   let equalsButton = document.querySelector('.calc-equals');
-  let negButton = document.querySelector('.calc-negative');
-  let moreButton = document.querySelector('.calc-more');
+  let toggleNegativeButton = document.querySelector('.calc-negative');
+  let showMoreButton = document.querySelector('.calc-more');
   let powerButton = document.querySelector('.calc-power');
   let rootButton = document.querySelector('.calc-root');
 
-  // EVENT LISTENERS
+  /* EVENT LISTENERS */
+
   numberButtons.forEach((el) => el.addEventListener('click', handleNumber));
   functionButtons.forEach((el) => el.addEventListener('click', handleOperator));
   AcButton.addEventListener('click', handleClear);
   DelButton.addEventListener('click', handleDel);
   equalsButton.addEventListener('click', handleEquals);
-  negButton.addEventListener('click', handleNegative);
-  moreButton.addEventListener('click', toggleMore);
+  toggleNegativeButton.addEventListener('click', toggleNegative);
+  showMoreButton.addEventListener('click', toggleShowMore);
 
-  // EVENT FUNCTIONS
+  /* EVENT HANDLERS */
 
+  // Number stored as a string to ensure '.' works
   function handleNumber(event) {
-    // Clear display if new expression
+    // Clear display if after previous expression resolves
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
     if (state.negative) {
-      state.currNum = parseInt(`-${state.currNum}${event.target.innerText}`);
+      state.currNum = `-${state.currNum}${event.target.innerText}`;
       state.negative = false;
-    } else
-      state.currNum = parseInt(`${state.currNum}${event.target.innerText}`);
+    } else state.currNum = `${state.currNum}${event.target.innerText}`;
 
     if (isNaN(state.currExp.at(-1))) state.currExp.push(state.currNum);
     else state.currExp.splice(-1, 1, state.currNum);
@@ -49,24 +53,20 @@
     updateDisplay();
   }
 
-  // TODO: Break up/simplify function
   function handleOperator(event) {
-    if (event.target.innerText === '√') return handleRoot(event);
-    // If there is a result, change currNum to new result
     if (state.result !== '') {
-      state.currNum = parseInt(state.result);
+      state.currNum = state.result;
       state.currExp.push(state.currNum);
     }
 
-    // Issue warning if no number before operator
     if (state.currExp.length === 0) return warning(event);
 
     const operator = event.target.innerText;
 
     state.currNum = '';
 
-    // If second operator, resolve current expression and set result of that as first number in a new expression - update history
-    if (state.currExp.length === 3) {
+    // If second operator, resolve current expression and set result of that as first number in a new expression
+    if (state.currExp.length > 2) {
       const answer = calculate();
       state.currExp = [answer];
     }
@@ -79,12 +79,15 @@
   }
 
   function handleDel(event) {
-    if (isNaN(state.currExp.at(-1))) state.currExp.pop();
-    else {
+    if (isNaN(state.currExp.at(-1)) || state.currNum < 10) {
+      state.currExp.pop();
+      state.currNum = '';
+    } else {
       state.currNum = Math.floor(state.currNum / 10);
       state.currExp.splice(-1, 1, state.currNum);
     }
     updateDisplay();
+    console.log(state);
   }
 
   function handleClear(event) {
@@ -96,6 +99,9 @@
 
   function handleEquals(event) {
     if (state.currNum === '') return warning(event);
+    if (state.currExp.at(-1) === '√') {
+      return (result.innerText = "Can't sqrt nothing!");
+    }
 
     let answer = calculate(state.currExp.join(''));
     isNaN(answer) || answer === Infinity || answer === -Infinity
@@ -108,27 +114,26 @@
     state.currExp = [];
   }
 
-  function handleNegative(event) {
+  function toggleNegative(event) {
     if (isNaN(state.currExp.at(-1))) state.negative = true;
     else state.currExp.splice(-1, 1, 0 - state.currExp.at(-1));
     updateDisplay();
   }
 
-  function toggleMore(event) {
-    if (!state.more) {
+  function toggleShowMore(event) {
+    if (!state.showMore) {
       rootButton.innerText = '√';
       powerButton.innerText = '^';
     } else {
       rootButton.innerText = '/';
       powerButton.innerText = '*';
     }
-    state.more = !state.more;
+    state.showMore = !state.showMore;
   }
 
-  function handleRoot(event) {
-    console.log('root');
-  }
-  // HELPER FUNCTION
+  function handleRoot(event) {}
+  /* HELPER FUNCTIONS */
+
   function updateDisplay() {
     history.innerText = state.currExp.join(' ');
     result.innerText = state.result;
@@ -141,24 +146,48 @@
 
   function calculate() {
     if (state.currExp.length === 1) return state.currExp[0];
-    const firstNum = state.currExp[0];
-    const secondNum = state.currExp[2];
+    let firstNum = parseFloat(state.currExp[0]);
+    let secondNum = parseFloat(state.currExp[2]);
+
+    let maxDecimal = Math.max(
+      decimalPlaces(firstNum),
+      decimalPlaces(secondNum)
+    );
+
+    if (maxDecimal) {
+      firstNum = firstNum * maxDecimal * 10;
+      secondNum = secondNum * maxDecimal * 10;
+    }
+
     switch (state.currExp[1].trim()) {
       case '+':
-        return firstNum + secondNum;
+        return maxDecimal
+          ? (firstNum + secondNum) / (maxDecimal * 10)
+          : firstNum + secondNum;
       case '-':
-        return firstNum - secondNum;
+        return maxDecimal
+          ? (firstNum - secondNum) / (maxDecimal * 10)
+          : firstNum - secondNum;
       case '/':
-        return firstNum / secondNum;
+        return maxDecimal
+          ? firstNum / secondNum / (maxDecimal * 100)
+          : firstNum / secondNum;
       case '*':
-        return firstNum * secondNum;
-      case '+':
-        return firstNum + secondNum;
+        return maxDecimal
+          ? (firstNum * secondNum) / (maxDecimal * 100)
+          : firstNum * secondNum;
       case '^':
-        return Math.pow(firstNum, secondNum);
+        return maxDecimal
+          ? Math.pow(firstNum, secondNum) / (maxDecimal * 100)
+          : Math.pow(firstNum, secondNum);
       default:
         return 'ERROR';
     }
+  }
+
+  function decimalPlaces(num) {
+    if (Number.isInteger(num)) return 1;
+    return num.toString().split('.')[1].length;
   }
 
   function roundToTenDigits(num) {
