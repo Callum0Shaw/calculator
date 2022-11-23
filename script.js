@@ -167,8 +167,7 @@
     if (state.currExp.includes('√'))
       state.currExp = calculateRootInArr(state.currExp);
     if (state.currExp.length === 1) return state.currExp[0];
-    console.table(state);
-
+    
     let firstNum = parseFloat(state.currExp[0]);
     let secondNum = parseFloat(state.currExp[2]);
 
@@ -176,7 +175,6 @@
       decimalPlaces(firstNum),
       decimalPlaces(secondNum)
     );
-    console.log(maxDecimal);
     if (maxDecimal) {
       firstNum = firstNum * maxDecimal * 10;
       secondNum = secondNum * maxDecimal * 10;
@@ -193,7 +191,7 @@
           : firstNum - secondNum;
       case '/':
         return maxDecimal
-          ? firstNum / secondNum / (maxDecimal * 100)
+          ? firstNum / secondNum
           : firstNum / secondNum;
       case '*':
         return maxDecimal
@@ -220,7 +218,7 @@
   }
 
   function decimalPlaces(num) {
-    if (Number.isInteger(num)) return 1;
+    if (Number.isInteger(num)) return 0;
     return num.toString().split('.')[1].length;
   }
 

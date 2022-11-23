@@ -1,6 +1,6 @@
 ## Calculator
 
-A simple calculator using **Vanilla JS** for the RS School from EPAM
+A simple calculator using **Vanilla JS** without the use of ```Eval()``` or the Function constructor, for the Rolling Scopes School from EPAM 
 
 ### Funcionality: 
 - Multipicaiton, Divison, Addition, Subtraction, Square Root, & Power of. 
