@@ -6,7 +6,7 @@ A simple calculator using **Vanilla JS** without the use of ```Eval()``` or the 
 - Multipicaiton, Divison, Addition, Subtraction, Square Root, & Power of. 
 - Can handle both negative and decimals
 - Clear All & Del
-- Keyboard inputs
+- Keyboard inputs (TODO)
 
 
 Note: See below for how the task dictated how to handle chaining. It does not take in to account PEDMAS
