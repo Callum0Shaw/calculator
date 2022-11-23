@@ -38,10 +38,18 @@
 
   // Number stored as a string to ensure '.' works
   function handleNumber(event) {
-    // Clear display if after previous expression resolves
+    // Checks if after recent equals
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
+    // Ignore duplciate decimal points
+    if (
+      state.currExp.at(-1) &&
+      event.target.innerText === '.' &&
+      state.currExp.at(-1).at(-1) === '.'
+    )
+      return warning(event);
+
     if (state.negative) {
       state.currNum = `-${state.currNum}${event.target.innerText}`;
       state.negative = false;
@@ -51,9 +59,11 @@
     else state.currExp.splice(-1, 1, state.currNum);
 
     updateDisplay();
+    console.table(state);
   }
 
   function handleOperator(event) {
+    if (event.target.innerText === '√') return handleRoot(event);
     if (state.result !== '') {
       state.currNum = state.result;
       state.currExp.push(state.currNum);
@@ -67,8 +77,9 @@
 
     // If second operator, resolve current expression and set result of that as first number in a new expression
     if (state.currExp.length > 2) {
-      const answer = calculate();
-      state.currExp = [answer];
+      if (state.currExp.includes('√'))
+        state.currExp = calculateRootInArr(state.currExp);
+      state.currExp = [calculate()];
     }
     // if last input is operator, override
     isNaN(state.currExp.at(-1))
@@ -76,6 +87,7 @@
       : state.currExp.push(` ${operator} `);
 
     updateDisplay();
+    console.table(state);
   }
 
   function handleDel(event) {
@@ -98,10 +110,12 @@
   }
 
   function handleEquals(event) {
-    if (state.currNum === '') return warning(event);
+    console.table(state);
+
     if (state.currExp.at(-1) === '√') {
-      return (result.innerText = "Can't sqrt nothing!");
+      return (result.innerText = '√X not X√ ');
     }
+    if (state.currNum === '') return warning(event);
 
     let answer = calculate(state.currExp.join(''));
     isNaN(answer) || answer === Infinity || answer === -Infinity
@@ -131,7 +145,12 @@
     state.showMore = !state.showMore;
   }
 
-  function handleRoot(event) {}
+  function handleRoot(event) {
+    if (state.currExp.at(-1) === '√') return warning(event);
+    state.currExp.push('√');
+    state.currNum = ''
+    updateDisplay();
+  }
   /* HELPER FUNCTIONS */
 
   function updateDisplay() {
@@ -145,7 +164,11 @@
   }
 
   function calculate() {
+    if (state.currExp.includes('√'))
+      state.currExp = calculateRootInArr(state.currExp);
     if (state.currExp.length === 1) return state.currExp[0];
+    console.table(state);
+
     let firstNum = parseFloat(state.currExp[0]);
     let secondNum = parseFloat(state.currExp[2]);
 
@@ -153,7 +176,7 @@
       decimalPlaces(firstNum),
       decimalPlaces(secondNum)
     );
-
+    console.log(maxDecimal);
     if (maxDecimal) {
       firstNum = firstNum * maxDecimal * 10;
       secondNum = secondNum * maxDecimal * 10;
@@ -183,6 +206,17 @@
       default:
         return 'ERROR';
     }
+  }
+
+  function calculateRootInArr(arr) {
+    if (!arr.includes('√')) returnArr;
+    const indexOfRoot = arr.indexOf('√');
+    arr.splice(
+      indexOfRoot,
+      2,
+      roundToTenDigits(Math.sqrt(arr[indexOfRoot + 1]).toString())
+    );
+    return arr;
   }
 
   function decimalPlaces(num) {
