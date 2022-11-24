@@ -7,22 +7,21 @@
     currNum: '',
     showMore: false,
     negative: false,
-    root: false,
   };
 
   /* SELECTORS/VARIABLES */
 
-  let history = document.querySelector('.calc-history');
-  let result = document.querySelector('.calc-result');
-  let numberButtons = document.querySelectorAll('.calc-number');
-  let functionButtons = document.querySelectorAll('.calc-function');
-  let AcButton = document.querySelector('.calc-AC');
-  let DelButton = document.querySelector('.calc-Del');
-  let equalsButton = document.querySelector('.calc-equals');
-  let toggleNegativeButton = document.querySelector('.calc-negative');
-  let showMoreButton = document.querySelector('.calc-more');
-  let powerButton = document.querySelector('.calc-power');
-  let rootButton = document.querySelector('.calc-root');
+  let history = document.querySelector('.calc__history');
+  let result = document.querySelector('.calc__result');
+  let numberButtons = document.querySelectorAll('.calc__number');
+  let functionButtons = document.querySelectorAll('.calc__function');
+  let AcButton = document.querySelector('.calc__AC');
+  let DelButton = document.querySelector('.calc__Del');
+  let equalsButton = document.querySelector('.calc__equals');
+  let toggleNegativeButton = document.querySelector('.calc__negative');
+  let showMoreButton = document.querySelector('.calc__more');
+  let powerButton = document.querySelector('.calc__power');
+  let rootButton = document.querySelector('.calc__root');
 
   /* EVENT LISTENERS */
 
@@ -59,7 +58,6 @@
     else state.currExp.splice(-1, 1, state.currNum);
 
     updateDisplay();
-    console.table(state);
   }
 
   function handleOperator(event) {
@@ -87,7 +85,6 @@
       : state.currExp.push(` ${operator} `);
 
     updateDisplay();
-    console.table(state);
   }
 
   function handleDel(event) {
@@ -99,7 +96,6 @@
       state.currExp.splice(-1, 1, state.currNum);
     }
     updateDisplay();
-    console.log(state);
   }
 
   function handleClear(event) {
@@ -110,8 +106,6 @@
   }
 
   function handleEquals(event) {
-    console.table(state);
-
     if (state.currExp.at(-1) === '√') {
       return (result.innerText = '√X not X√ ');
     }
@@ -159,8 +153,8 @@
   }
 
   function warning(event) {
-    event.target.classList.add('calc-button-warning');
-    setTimeout(() => event.target.classList.remove('calc-button-warning'), 100);
+    event.target.classList.add('calc__button__warning');
+    setTimeout(() => event.target.classList.remove('calc__button__warning'), 100);
   }
 
   function calculate() {

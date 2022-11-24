@@ -12,17 +12,74 @@
 }
 
 /* RESET/NORMALISE */
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
 *,
-::before,
-::after {
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
+}
+/*
+  2. Remove default margin
+*/
+* {
   margin: 0;
 }
+/*
+  3. Allow percentage-based heights in the application
+*/
+html,
 body {
-  margin: 0;
   height: 100%;
-  width: 100%;
+}
+/*
+  Typographic tweaks!
+  4. Add accessible line-height
+  5. Improve text rendering
+*/
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+/*
+  6. Improve media defaults
+*/
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+/*
+  7. Remove built-in form typography styles
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+/*
+  8. Avoid text overflows
+*/
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+/*
+  9. Create a root stacking context
+*/
+#root,
+#__next {
+  isolation: isolate;
 }
 
 /* CSS VARIABLES */
@@ -40,19 +97,19 @@ body {
   color: var(--white);
   font-size: 16px;
   position: relative;
-  min-height: 100vh;
-  min-width: 100vw;
+  height: 100%;
   background-color: #222;
 }
 
 .container {
-  width: 100%;
-  height: 100%;
   display: flex;
+  height: 100%;
+  max-height: 100vh;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
-@media (min-width: 700px) {
+@media (min-width: 800px) {
   .container {
     flex-direction: row;
   }
@@ -68,6 +125,7 @@ body {
   }
 }
 
+
 .gradient {
   --size: 250px;
   --speed: 50s;
@@ -77,8 +135,6 @@ body {
   max-height: 100%;
   width: 800px;
   height: 800px;
-  left: calc(50% - 400px);
-  top: calc(50% - 400px);
   overflow: hidden;
   position: absolute;
   filter: blur(calc(var(--size) / 5));
@@ -92,23 +148,30 @@ body {
 /* HEADER */
 header {
   position: relative;
-  min-width: 360px;
-  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 h1 {
   position: relative;
-  padding: 10px;
   font-family: 'Chillax-Light';
+  width: 400px;
   color: var(--white);
-  font-size: 3em;
+  font-size: 48px;
   text-align: end;
 }
-@media (min-width: 700px) {
+@media (min-width: 800px) {
+  header {
+    display: block;
+    width: 360px;
+    height: 100%;
+  }
   h1 {
     position: absolute;
-    top: -30vh;
-    flex-direction: row;
+    width: 100%;
+    top: 20%;
+    padding: 0;
   }
 }
 h2 {
@@ -120,7 +183,7 @@ h2 {
 main {
   display: flex;
   position: relative;
-  min-height: 100vh;
+  height: 100%;
   width: 100%;
   justify-content: center;
   align-items: center;
@@ -128,64 +191,64 @@ main {
   align-self: start;
 }
 
-.calc-container {
+.calc__container {
   background-color: var(--background);
-  width: clamp(360px, 400px, 420px);
+  width: 400px;
+  padding: 1px;
 }
-.calc-display {
+.calc__display {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 146px;
-  font-size: 22px;
+  font-size: 24px;
   text-align: end;
   padding: 5px 20px 20px 20px;
 }
-.calc-history {
+.calc__history {
   font-family: 'Chillax-Regular';
   color: #fefcfbc9;
 }
-.calc-result {
+.calc__result {
   font-family: 'Chillax-Medium';
-  font-size: 42px;
+  font-size: 48px;
 }
-.calc-table {
-  width: 100%;
-}
-.calc-row {
+.calc__grid {
   display: flex;
-  justify-content: center;
-  gap: 3px;
+  flex-direction: column;
+  gap: 1px;
 }
-.calc-row td {
-  flex: 1;
+.calc__row {
+  display: flex;
+  gap: 1px;
+  justify-content: space-between;
+  flex: 1 1 85px;
 }
-.calc-button {
-  width: 100%;
-  height: 86px;
-  margin-bottom: 3px;
+.calc__button {
+  flex: 1 1 90px;
+  margin-bottom: 0.5px;
   padding: 0;
   border: 0;
   background-color: var(--main);
   font-family: 'Chillax-Regular';
-  font-size: 1.75em;
+  font-size: 28px;
   color: var(--white);
   z-index: 2;
   transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
   transition: background-color 0.3s cubic-bezier(0, 0.55, 0.45, 1);
 }
-.calc-button:hover {
+.calc__button:hover {
   background-color: var(--dark);
 }
-.calc-button:active {
+.calc__button:active {
   transform: scale(0.95);
   box-shadow: 0px 0px 3px 0.25px var(--background) inset;
 }
-.calc-button-warning {
+.calc__button__warning {
   transform: scale(0.95);
   background-color: var(--warning) !important;
   box-shadow: 0px 0px 3px 0.25px var(--background) inset;
 }
-.calc-number {
+.calc__number {
   font-family: 'Chillax-Medium';
 }
