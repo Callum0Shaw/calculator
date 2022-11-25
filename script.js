@@ -6,7 +6,6 @@
     currExp: [],
     currNum: '',
     showMore: false,
-    negative: false,
   };
 
   /* SELECTORS/VARIABLES */
@@ -35,56 +34,40 @@
 
   /* EVENT HANDLERS */
 
-  // Number stored as a string to ensure '.' works
   function handleNumber(event) {
-    // Checks if after recent equals
     if (state.currExp.length === 0 && state.result !== '') {
       handleClear();
     }
-    // Ignore duplciate decimal points
-    if (
-      state.currExp.at(-1) &&
-      event.target.innerText === '.' &&
-      state.currExp.at(-1).at(-1) === '.'
-    )
+
+    if (event.target.innerText === '.' && state.currNum.includes('.'))
       return warning(event);
 
-    if (state.negative) {
-      state.currNum = `-${state.currNum}${event.target.innerText}`;
-      state.negative = false;
-    } else state.currNum = `${state.currNum}${event.target.innerText}`;
+    state.currNum = `${state.currNum}${event.target.innerText}`;
 
-    if (isNaN(state.currExp.at(-1))) state.currExp.push(state.currNum);
-    else state.currExp.splice(-1, 1, state.currNum);
-
-    updateDisplay();
+    return updateDisplay();
   }
 
   function handleOperator(event) {
-    if (event.target.innerText === '√') return handleRoot(event);
-    if (state.result !== '') {
-      state.currNum = state.result;
-      state.currExp.push(state.currNum);
-    }
-
-    if (state.currExp.length === 0) return warning(event);
-
     const operator = event.target.innerText;
 
+    if (isAnOperator(state.currExp.at(-1)) && !state.currNum)
+      return state.currExp.splice(-1, 1, operator);
+    if (!state.currNum) return warning(event);
+
+    if (state.result) {
+      state.currNum = state.result;
+      state.result = '';
+    }
+
+    state.currExp.push(state.currNum);
     state.currNum = '';
 
     // If second operator, resolve current expression and set result of that as first number in a new expression
-    if (state.currExp.length > 2) {
-      if (state.currExp.includes('√'))
-        state.currExp = calculateRootInArr(state.currExp);
-      state.currExp = [calculate()];
-    }
-    // if last input is operator, override
-    isNaN(state.currExp.at(-1))
-      ? state.currExp.splice(-1, 1, ` ${operator} `)
-      : state.currExp.push(` ${operator} `);
+    if (state.currExp.length > 2) state.currExp = [calculate(state.currExp)];
 
-    updateDisplay();
+    state.currExp.push(operator);
+
+    return updateDisplay();
   }
 
   function handleDel(event) {
@@ -95,37 +78,34 @@
       state.currNum = Math.floor(state.currNum / 10);
       state.currExp.splice(-1, 1, state.currNum);
     }
-    updateDisplay();
+    return updateDisplay();
   }
 
   function handleClear(event) {
     state.result = '';
     state.currExp = [];
     state.currNum = '';
-    updateDisplay();
+    return updateDisplay();
   }
 
   function handleEquals(event) {
-    if (state.currExp.at(-1) === '√') {
-      return (result.innerText = '√X not X√ ');
-    }
     if (state.currNum === '') return warning(event);
+    state.currExp.push(state.currNum);
+    state.currNum = '';
 
-    let answer = calculate(state.currExp.join(''));
-    isNaN(answer) || answer === Infinity || answer === -Infinity
+    let answer = calculate(state.currExp);
+    checkIfValidAnswer(answer)
       ? (state.result = 'MATHS IS HARD')
       : (state.result = formatNumber(answer));
 
-    updateDisplay();
-
-    state.currNum = '';
     state.currExp = [];
+
+    return updateDisplay();
   }
 
   function toggleNegative(event) {
-    if (isNaN(state.currExp.at(-1))) state.negative = true;
-    else state.currExp.splice(-1, 1, 0 - state.currExp.at(-1));
-    updateDisplay();
+    state.currNum = state.currNum ? `-${sttae.currNum}` : '-';
+    return updateDisplay();
   }
 
   function toggleShowMore(event) {
@@ -142,28 +122,32 @@
   function handleRoot(event) {
     if (state.currExp.at(-1) === '√') return warning(event);
     state.currExp.push('√');
-    state.currNum = ''
+    state.currNum = '';
     updateDisplay();
   }
+  
   /* HELPER FUNCTIONS */
 
   function updateDisplay() {
-    history.innerText = state.currExp.join(' ');
+    history.innerText = `${state.currExp.join(' ')} ${state.currNum}`;
     result.innerText = state.result;
   }
 
   function warning(event) {
     event.target.classList.add('calc__button__warning');
-    setTimeout(() => event.target.classList.remove('calc__button__warning'), 100);
+    setTimeout(
+      () => event.target.classList.remove('calc__button__warning'),
+      100
+    );
   }
 
-  function calculate() {
-    if (state.currExp.includes('√'))
-      state.currExp = calculateRootInArr(state.currExp);
-    if (state.currExp.length === 1) return state.currExp[0];
-    
-    let firstNum = parseFloat(state.currExp[0]);
-    let secondNum = parseFloat(state.currExp[2]);
+  // TODO: Consider to refactor,
+  function calculate(exp) {
+    if (exp.includes('√')) state.currExp = calculateRootInArr(exp);
+    if (exp.length === 1) return exp[0];
+
+    let firstNum = parseFloat(exp[0]);
+    let secondNum = parseFloat(exp[2]);
 
     let maxDecimal = Math.max(
       decimalPlaces(firstNum),
@@ -174,7 +158,7 @@
       secondNum = secondNum * maxDecimal * 10;
     }
 
-    switch (state.currExp[1].trim()) {
+    switch (exp[1].trim()) {
       case '+':
         return maxDecimal
           ? (firstNum + secondNum) / (maxDecimal * 10)
@@ -184,9 +168,7 @@
           ? (firstNum - secondNum) / (maxDecimal * 10)
           : firstNum - secondNum;
       case '/':
-        return maxDecimal
-          ? firstNum / secondNum
-          : firstNum / secondNum;
+        return maxDecimal ? firstNum / secondNum : firstNum / secondNum;
       case '*':
         return maxDecimal
           ? (firstNum * secondNum) / (maxDecimal * 100)
@@ -225,5 +207,22 @@
   function formatNumber(num) {
     const rounded = roundToTenDigits(num);
     return rounded.toLocaleString();
+  }
+  function isAnOperator(str) {
+    console.log(str);
+    if (!str) return false;
+    const operators = {
+      '+': true,
+      '-': true,
+      '*': true,
+      '/': true,
+      '^': true,
+      '√': true,
+    };
+    return operators[str] || false;
+  }
+
+  function checkIfValidAnswer(answer) {
+    return isNaN(answer) || answer === Infinity || answer === -Infinity;
   }
 })();
