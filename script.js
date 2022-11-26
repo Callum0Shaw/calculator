@@ -39,15 +39,15 @@
     const key = event.key;
     if (key === 'Enter') {
       event.preventDefault();
-      equalsButton.click();
+      return equalsButton.click();
     }
     if (key === 'Backspace') {
       event.preventDefault();
-      DelButton.click();
+      return DelButton.click();
     }
     if (key === 'Delete') {
       event.preventDefault();
-      AcButton.click();
+      return AcButton.click();
     }
     for (const x of numberButtons) {
       if (x.innerText === key) return x.click();
@@ -61,10 +61,10 @@
     if (state.result !== '') {
       handleClear();
     }
-    if(state.currNum.split('.').join('').length > 9) {
-      state.currNum = `${state.currNum.slice(0, -1)}${event.target.innerText}`
-      return updateDisplay()
-    } 
+    if (state.currNum.split('.').join('').length > 9) {
+      state.currNum = `${state.currNum.slice(0, -1)}${event.target.innerText}`;
+      return updateDisplay();
+    }
     if (event.target.innerText === '.' && state.currNum.includes('.'))
       return warning(event);
 
