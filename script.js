@@ -69,6 +69,7 @@
       return warning(event);
 
     state.currNum = `${state.currNum}${event.target.innerText}`;
+    console.log(state.currExp, state.currNum);
     return updateDisplay();
   }
 
@@ -79,21 +80,23 @@
       state.currExp.splice(-1, 1, operator);
       return updateDisplay();
     }
+    
     if (!state.currNum && !state.result) return warning(event);
-
+    
     if (state.result) {
       state.currNum = state.result;
       state.currExp = [];
       state.result = '';
     }
-    state.currExp.push(parseInt(state.currNum).toLocaleString());
+    state.currExp.push(state.currNum);
+    console.log(state.currExp, state.currNum);
     state.currNum = '';
 
     // If second operator, resolve current expression and set result of that as first number in a new expression
     if (state.currExp.length > 2) state.currExp = [calculate(state.currExp)];
 
     state.currExp.push(operator);
-
+    console.log(state.currExp, state.currNum);
     return updateDisplay();
   }
 
@@ -234,6 +237,7 @@
   function formatNumber(num) {
     if (num >= 1000000000) return num.toExponential(2);
     const rounded = roundToTenDigits(num);
+
     return rounded.toLocaleString();
   }
   function isAnOperator(str) {
