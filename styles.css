@@ -234,7 +234,7 @@ main {
 }
 .calc__result {
   font-family: 'Chillax-Medium';
-  font-size: 48px;
+  font-size: 38px;
 }
 .calc__grid {
   display: flex;
