@@ -103,6 +103,7 @@
       state.currNum = state.currNum.slice(0, -1);
       return updateDisplay();
     }
+    if(state.currExp = []) return updateDisplay()
     state.currNum = state.currExp.at(-2);
     state.currExp = [];
     return updateDisplay();
