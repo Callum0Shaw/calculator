@@ -24,6 +24,7 @@
 
   /* EVENT LISTENERS */
 
+  document.addEventListener('keydown', handleKeyboard);
   numberButtons.forEach((el) => el.addEventListener('click', handleNumber));
   operatorButtons.forEach((el) => el.addEventListener('click', handleOperator));
   AcButton.addEventListener('click', handleClear);
@@ -33,6 +34,27 @@
   showMoreButton.addEventListener('click', toggleShowMore);
 
   /* EVENT HANDLERS */
+
+  function handleKeyboard(event) {
+    const key = event.key;
+    if(key === 'Enter') {
+      event.preventDefault()
+      equalsButton.click()
+    }
+    if(key === 'Backspace') {
+      event.preventDefault()
+      DelButton.click()
+    }if(key === 'Delete') {
+      event.preventDefault()
+      AcButton.click()
+    }
+    for (const x of numberButtons) {
+      if (x.innerText === key) return x.click();
+    }
+    for (const y of operatorButtons) {
+      if (y.innerText === key) return y.click();
+    }
+  }
 
   function handleNumber(event) {
     if (state.result !== '') {
@@ -48,19 +70,17 @@
   }
 
   function handleOperator(event) {
-    console.table(state)
     const operator = event.target.innerText;
-    if(operator === '√') return handleRoot(event)
+    if (operator === '√') return handleRoot(event);
     if (isAnOperator(state.currExp.at(-1)) && !state.currNum)
       return state.currExp.splice(-1, 1, operator);
     if (!state.currNum && !state.result) return warning(event);
 
     if (state.result) {
       state.currNum = state.result;
-      state.currExp = []
+      state.currExp = [];
       state.result = '';
     }
-
     state.currExp.push(state.currNum);
     state.currNum = '';
 
@@ -158,7 +178,7 @@
       secondNum = secondNum * maxDecimal * 10;
     }
 
-    switch (exp[1].trim()) {
+    switch (exp[1]) {
       case '+':
         return maxDecimal
           ? (firstNum + secondNum) / (maxDecimal * 10)
