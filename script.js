@@ -13,7 +13,7 @@
   let history = document.querySelector('.calc__history');
   let result = document.querySelector('.calc__result');
   let numberButtons = document.querySelectorAll('.calc__number');
-  let functionButtons = document.querySelectorAll('.calc__function');
+  let operatorButtons = document.querySelectorAll('.calc__operator');
   let AcButton = document.querySelector('.calc__AC');
   let DelButton = document.querySelector('.calc__Del');
   let equalsButton = document.querySelector('.calc__equals');
@@ -25,7 +25,7 @@
   /* EVENT LISTENERS */
 
   numberButtons.forEach((el) => el.addEventListener('click', handleNumber));
-  functionButtons.forEach((el) => el.addEventListener('click', handleOperator));
+  operatorButtons.forEach((el) => el.addEventListener('click', handleOperator));
   AcButton.addEventListener('click', handleClear);
   DelButton.addEventListener('click', handleDel);
   equalsButton.addEventListener('click', handleEquals);
@@ -48,11 +48,12 @@
   }
 
   function handleOperator(event) {
+    console.table(state)
     const operator = event.target.innerText;
-
+    if(operator === '√') return handleRoot(event)
     if (isAnOperator(state.currExp.at(-1)) && !state.currNum)
       return state.currExp.splice(-1, 1, operator);
-    if (!state.currNum) return warning(event);
+    if (!state.currNum && !state.result) return warning(event);
 
     if (state.result) {
       state.currNum = state.result;
@@ -104,7 +105,7 @@
   }
 
   function toggleNegative(event) {
-    state.currNum = state.currNum ? `-${sttae.currNum}` : '-';
+    state.currNum = state.currNum ? `-${state.currNum}` : '-';
     return updateDisplay();
   }
 
@@ -125,7 +126,7 @@
     state.currNum = '';
     updateDisplay();
   }
-  
+
   /* HELPER FUNCTIONS */
 
   function updateDisplay() {
