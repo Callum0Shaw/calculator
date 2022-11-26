@@ -35,7 +35,7 @@
   /* EVENT HANDLERS */
 
   function handleNumber(event) {
-    if (state.currExp.length === 0 && state.result !== '') {
+    if (state.result !== '') {
       handleClear();
     }
 
@@ -57,6 +57,7 @@
 
     if (state.result) {
       state.currNum = state.result;
+      state.currExp = []
       state.result = '';
     }
 
@@ -98,8 +99,6 @@
     checkIfValidAnswer(answer)
       ? (state.result = 'MATHS IS HARD')
       : (state.result = formatNumber(answer));
-
-    state.currExp = [];
 
     return updateDisplay();
   }
@@ -210,7 +209,6 @@
     return rounded.toLocaleString();
   }
   function isAnOperator(str) {
-    console.log(str);
     if (!str) return false;
     const operators = {
       '+': true,
