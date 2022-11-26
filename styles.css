@@ -165,6 +165,7 @@ h1 {
   color: var(--white);
   font-size: 48px;
   text-align: end;
+  letter-spacing: 1px;
 }
 .header__list {
   display: none;
@@ -200,6 +201,10 @@ h2 {
   font-family: 'Chillax-Light';
   text-align: center;
   font-size: 14px;
+}
+strong {
+  font-family: 'Chillax-Medium';
+  letter-spacing: .5px;
 }
 
 /* CALCULATOR */
