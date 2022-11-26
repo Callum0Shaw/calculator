@@ -109,7 +109,7 @@ body {
   align-items: center;
   margin: auto;
   overflow: hidden;
-  max-width: 1600px;
+  max-width: 1400px;
 }
 @media (min-width: 800px) {
   .container {
