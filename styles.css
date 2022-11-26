@@ -149,11 +149,10 @@ body {
 /* HEADER */
 header {
   position: relative;
-  width: 100%;
-  min-width: 400px;
-  width: 400px;
+  width: clamp(360px, 400px, 100%);
   display: flex;
   justify-content: center;
+  padding-top: 10px;
 }
 .header__container {
   position: relative;
@@ -182,7 +181,7 @@ h1 {
   .header__container {
     position: absolute;
     width: 100%;
-    top: 20%;
+    top: 18%;
     padding: 0;
   }
   .header__list {
@@ -253,6 +252,7 @@ main {
   margin-bottom: 0.5px;
   padding: 0;
   border: 0;
+  outline: none;
   background-color: var(--main);
   font-family: 'Chillax-Regular';
   font-size: 28px;

@@ -37,16 +37,17 @@
 
   function handleKeyboard(event) {
     const key = event.key;
-    if(key === 'Enter') {
-      event.preventDefault()
-      equalsButton.click()
+    if (key === 'Enter') {
+      event.preventDefault();
+      equalsButton.click();
     }
-    if(key === 'Backspace') {
-      event.preventDefault()
-      DelButton.click()
-    }if(key === 'Delete') {
-      event.preventDefault()
-      AcButton.click()
+    if (key === 'Backspace') {
+      event.preventDefault();
+      DelButton.click();
+    }
+    if (key === 'Delete') {
+      event.preventDefault();
+      AcButton.click();
     }
     for (const x of numberButtons) {
       if (x.innerText === key) return x.click();
@@ -60,20 +61,24 @@
     if (state.result !== '') {
       handleClear();
     }
-
+    if(state.currNum.split('.').join('').length > 9) {
+      state.currNum = `${state.currNum.slice(0, -1)}${event.target.innerText}`
+      return updateDisplay()
+    } 
     if (event.target.innerText === '.' && state.currNum.includes('.'))
       return warning(event);
 
     state.currNum = `${state.currNum}${event.target.innerText}`;
-
     return updateDisplay();
   }
 
   function handleOperator(event) {
     const operator = event.target.innerText;
     if (operator === '√') return handleRoot(event);
-    if (isAnOperator(state.currExp.at(-1)) && !state.currNum)
-      return state.currExp.splice(-1, 1, operator);
+    if (isAnOperator(state.currExp.at(-1)) && !state.currNum) {
+      state.currExp.splice(-1, 1, operator);
+      return updateDisplay();
+    }
     if (!state.currNum && !state.result) return warning(event);
 
     if (state.result) {
@@ -81,7 +86,7 @@
       state.currExp = [];
       state.result = '';
     }
-    state.currExp.push(state.currNum);
+    state.currExp.push(parseInt(state.currNum).toLocaleString());
     state.currNum = '';
 
     // If second operator, resolve current expression and set result of that as first number in a new expression
@@ -93,13 +98,13 @@
   }
 
   function handleDel(event) {
-    if (isNaN(state.currExp.at(-1)) || state.currNum < 10) {
-      state.currExp.pop();
-      state.currNum = '';
-    } else {
-      state.currNum = Math.floor(state.currNum / 10);
-      state.currExp.splice(-1, 1, state.currNum);
+    if (state.result) handleClear();
+    if (state.currNum) {
+      state.currNum = state.currNum.slice(0, -1);
+      return updateDisplay();
     }
+    state.currNum = state.currExp.at(-2);
+    state.currExp = [];
     return updateDisplay();
   }
 
@@ -124,6 +129,7 @@
   }
 
   function toggleNegative(event) {
+    if (state.result) handleClear();
     state.currNum = state.currNum ? `-${state.currNum}` : '-';
     return updateDisplay();
   }
@@ -161,7 +167,6 @@
     );
   }
 
-  // TODO: Consider to refactor,
   function calculate(exp) {
     if (exp.includes('√')) state.currExp = calculateRootInArr(exp);
     if (exp.length === 1) return exp[0];
@@ -225,6 +230,7 @@
   }
 
   function formatNumber(num) {
+    if (num >= 1000000000) return num.toExponential(2);
     const rounded = roundToTenDigits(num);
     return rounded.toLocaleString();
   }
