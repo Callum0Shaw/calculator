@@ -103,7 +103,7 @@
       state.currNum = state.currNum.slice(0, -1);
       return updateDisplay();
     }
-    if(state.currExp = []) return updateDisplay()
+    if ((state.currExp = [])) return updateDisplay();
     state.currNum = state.currExp.at(-2);
     state.currExp = [];
     return updateDisplay();
@@ -147,6 +147,7 @@
   }
 
   function handleRoot(event) {
+    if (state.result) handleClear();
     if (state.currExp.at(-1) === '√') return warning(event);
     state.currExp.push('√');
     state.currNum = '';
