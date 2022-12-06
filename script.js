@@ -80,9 +80,9 @@
       state.currExp.splice(-1, 1, operator);
       return updateDisplay();
     }
-    
+
     if (!state.currNum && !state.result) return warning(event);
-    
+
     if (state.result) {
       state.currNum = state.result;
       state.currExp = [];
@@ -127,7 +127,7 @@
     let answer = calculate(state.currExp);
     checkIfValidAnswer(answer)
       ? (state.result = 'MATHS IS HARD')
-      : (state.result = formatNumber(answer));
+      : (state.result = answer);
 
     return updateDisplay();
   }
@@ -161,7 +161,7 @@
 
   function updateDisplay() {
     history.innerText = `${state.currExp.join(' ')} ${state.currNum}`;
-    result.innerText = state.result;
+    result.innerText = formatNumber(state.result);
   }
 
   function warning(event) {
@@ -235,7 +235,8 @@
   }
 
   function formatNumber(num) {
-    if (num >= 1000000000) return num.toExponential(2);
+    if(!num) return ''
+    if (num >= 10000000000) return num.toExponential(2);
     const rounded = roundToTenDigits(num);
 
     return rounded.toLocaleString();
